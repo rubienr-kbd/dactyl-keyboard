@@ -110,7 +110,7 @@ else:
 
 if 'HS_' in plate_style:
     symmetry = "asymmetric"
-    plate_file = path.join(parts_path, r"hot_swap_plate")
+    plate_file = path.join(parts_path, r"diyk_hot_swap_plate")
     plate_offset = 0.0
 
 if (trackball_in_wall or ('TRACKBALL' in thumb_style)) and not ball_side == 'both':
@@ -221,6 +221,8 @@ def single_plate(cylinder_segments=100, side="right"):
                 keyswitch_height + 2 * clip_undercut,
                 mount_thickness
             )
+
+        if plate_style in ['NOTCH']:
             undercut = union([undercut,
                 box(
                     keyswitch_width + 2 * clip_undercut,
@@ -816,7 +818,7 @@ def thumb_connectors(side='right', style_override=None):
         return minidox_thumb_connectors()
     elif _thumb_style == "CARBONFET":
         return carbonfet_thumb_connectors()
-      
+
     elif "TRACKBALL" in _thumb_style:
         if (side == ball_side or ball_side == 'both'):
             if _thumb_style == "TRACKBALL_ORBYL":
@@ -825,7 +827,7 @@ def thumb_connectors(side='right', style_override=None):
                 return tbcj_thumb_connectors()
         else:
             return thumb_connectors(side, style_override=other_thumb)
-          
+
     else:
         return default_thumb_connectors()
 
@@ -2114,7 +2116,7 @@ def tbcj_thumb_layout(shape):
 
 #def oct_corner(i, radius, shape):
 #    i = (i+1)%8
-#    
+#
 #    points_x = [1, 2, 2, 1, -1, -2, -2, -1]
 #    points_y = [2, 1, -1, -2, -2, -1, 1, 2]
 #
@@ -2127,7 +2129,7 @@ def oct_corner(i, diameter, shape):
 
     r = radius
     m = radius * math.tan(math.pi / 8)
-    
+
     points_x = [m, r, r, m, -m, -r, -r, -m]
     points_y = [r, m, -m, -r, -r, -m, m, r]
 
@@ -2625,7 +2627,7 @@ def thumb_connection(side='right', style_override=None):
         return minidox_thumb_connection(side=side)
     elif _thumb_style == "CARBONFET":
         return carbonfet_thumb_connection(side=side)
-      
+
     elif "TRACKBALL" in _thumb_style:
         if (side == ball_side or ball_side == 'both'):
             if _thumb_style == "TRACKBALL_ORBYL":
@@ -4009,11 +4011,10 @@ def baseplate(wedge_angle=None, side='right'):
                 loc = hole.Center()
                 hole_shapes.append(
                     translate(
-                        cylinder(screw_cbore_diameter/2.0, screw_cbore_depth),
-                        (loc.x, loc.y, 0)
-                        # (loc.x, loc.y, screw_cbore_depth/2)
+                            ( cone(screw_cbore_diameter/2.0, screw_hole_diameter/2, screw_cbore_depth),(loc.x, loc.y, 0) ) if screw_cbore_style == 'COUNTERSINK' else ( cylinder(screw_cbore_diameter/2.0, screw_cbore_depth),(loc.x, loc.y, 0) )
+                        )
                     )
-                )
+
             shape = difference(shape, hole_shapes)
             shape = translate(shape, (0, 0, -base_rim_thickness))
             shape = union([shape, inner_shape])

@@ -329,6 +329,7 @@
     "base_rim_thickness": 5.0,
     "screw_cbore_diameter": 4.0,
     "screw_cbore_depth": 2.0,
+    "screw_cbore_style": "COUNTERBORE",
     "plate_holes": false,
     "plate_holes_xy_offset": [
         0.0,
