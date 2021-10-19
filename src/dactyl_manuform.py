@@ -4009,9 +4009,18 @@ def baseplate(wedge_angle=None, side='right'):
             hole_shapes=[]
             for hole in holes:
                 loc = hole.Center()
-                hole_shapes.append(
-                    translate(
-                            ( cone(screw_cbore_diameter/2.0, screw_hole_diameter/2, screw_cbore_depth),(loc.x, loc.y, 0) ) if screw_cbore_style == 'COUNTERSINK' else ( cylinder(screw_cbore_diameter/2.0, screw_cbore_depth),(loc.x, loc.y, 0) )
+                if screw_cbore_style == "COUNTERBORE":
+                    hole_shapes.append(
+                        translate(
+                            cylinder(screw_cbore_diameter/2.0, screw_cbore_depth),
+                            (loc.x, loc.y, 0)
+                        )
+                    )
+                else:
+                    hole_shapes.append(
+                        translate(
+                            cone(screw_cbore_diameter/2.0, screw_hole_diameter/2.0, screw_cbore_depth),
+                            (loc.x, loc.y, 0)
                         )
                     )
 

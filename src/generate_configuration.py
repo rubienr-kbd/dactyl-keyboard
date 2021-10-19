@@ -37,7 +37,7 @@ shape_config = {
     'symmetry':  "symmetric",  # "asymmetric" or "symmetric"
 
     'column_style_gt5':  "orthographic",
-    'column_style':  "orthographic",  # options include :standard, :orthographic, and :fixed
+    'column_style':  "standard",  # options include :standard, :orthographic, and :fixed
 
     'thumb_offsets':  [6, -3, 7],
     'keyboard_z_offset':  (
@@ -337,12 +337,12 @@ shape_config = {
     # COMMON DIMENSION
     'screw_hole_diameter': 3,
     # USED FOR CADQUERY ONLY
-    'base_thickness': 3.0, # thickness in the middle of the plate
+    'base_thickness': 2.0, # thickness in the middle of the plate
     'base_offset': 3.0, # Both start flat/flush on the bottom.  This offsets the base up (if positive)
-    'base_rim_thickness': 5.0,  # thickness on the outer frame with screws
-    'screw_cbore_diameter': 4.0,
+    'base_rim_thickness': 3.0,  # thickness on the outer frame with screws
+    'screw_cbore_diameter': 5.8,
     'screw_cbore_depth': 2.0,
-    'screw_cbore_style': 'COUNTERSINK', # 'COUNTERSINK' (conical) or 'COUNTERBORE' (cylindrical)
+    'screw_cbore_style':  'COUNTERSINK',# 'COUNTERSINK' (conical) or 'COUNTERBORE' (cylindrical)
 
     # Offset is from the top inner corner of the top inner key.
 

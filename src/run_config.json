@@ -13,7 +13,7 @@
     "tenting_angle": 0.26179916666666664,
     "symmetry": "symmetric",
     "column_style_gt5": "orthographic",
-    "column_style": "orthographic",
+    "column_style": "standard",
     "thumb_offsets": [
         6,
         -3,
@@ -327,7 +327,7 @@
     "base_thickness": 3.0,
     "base_offset": 3.0,
     "base_rim_thickness": 5.0,
-    "screw_cbore_diameter": 4.0,
+    "screw_cbore_diameter": 5.8,
     "screw_cbore_depth": 2.0,
     "screw_cbore_style": "COUNTERSINK",
     "plate_holes": false,
