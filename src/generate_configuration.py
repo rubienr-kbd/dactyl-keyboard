@@ -19,17 +19,17 @@ shape_config = {
     ######################
 
     'save_dir': '.',
-    'config_name':  "DMF",
+    'config_name':  "DMF_4x6HS",
 
     'show_caps': False,
     'show_pcbs': False, #only runs if caps are shown, easist place to initially inject geometry
 
     'nrows':  4, #5,  # key rows
-    'ncols':  5, #6,  # key columns
+    'ncols':  6, #6,  # key columns
 
     'alpha':  pi / 12.0,  # curvature of the columns
     'beta':  pi / 36.0,  # curvature of the rows
-    'centercol':  5,  # controls left_right tilt / tenting (higher number is more tenting)
+    'centercol':  3,  # controls left_right tilt / tenting (higher number is more tenting)
     'centerrow_offset':  3,  # rows from max, controls front_back tilt
     'tenting_angle':  pi / 12.0,  # or, change this for more precise tenting control
 
@@ -48,7 +48,7 @@ shape_config = {
     # THUMB PARAMETERS
     ##############################
     # 'DEFAULT' 6-key, 'MINI' 5-key, 'CARBONFET' 6-key, 'MINIDOX' 3-key, 'TRACKBALL_ORBYL', 'TRACKBALL_CJ'
-    'thumb_style': 'MINI',
+    'thumb_style': 'DEFAULT',
     'default_1U_cluster': True, # only used with default, makes top right thumb cluster key 1U
     # Thumb key size.  May need slight oversizing, check w/ caps.  Additional spacing will be automatically added for larger keys.
     'minidox_Usize': 1.6,
@@ -178,7 +178,7 @@ shape_config = {
     # 'HS_UNDERCUT' = hot swap underside with undercut. Does not generate properly.  Hot swap step needs to be modified.
     # 'HS_NOTCH' = hot swap underside with notch.  Does not generate properly.  Hot swap step needs to be modified.
     # 'plate_style':  'NUB',
-    'plate_style': 'NOTCH',
+    'plate_style': 'HS_NOTCH',
 
     'hole_keyswitch_height':  14.0,
     'hole_keyswitch_width':  14.0,
@@ -343,6 +343,15 @@ shape_config = {
     'screw_cbore_diameter': 5.8,
     'screw_cbore_depth': 2.0,
     'screw_cbore_style':  'COUNTERSINK',# 'COUNTERSINK' (conical) or 'COUNTERBORE' (cylindrical)
+
+    ###################################
+    ## Bottom Plate Logo
+    ###################################
+    # COMMON DIMENSION
+    'logo_file':  'diyk_logo', #Logo STEP file name. Logo should be extruded 1mm high. Origin should be in center. Leave empty for none.
+    'logo_xpos':  -50,
+    'logo_ypos':  0,
+    'logo_plates':  'RIGHT', #LEFT, RIGHT, or BOTH
 
     # Offset is from the top inner corner of the top inner key.
 
