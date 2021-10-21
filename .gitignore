@@ -19,3 +19,9 @@ things/
 things/*.scad
 things/*.step
 things/*.stl
+
+src/run_config - 4x6HS 2021-10-18.json
+
+src/run_config - 4x5 Dalinar 2021-10-19.json
+
+*.json

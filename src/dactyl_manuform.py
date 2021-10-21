@@ -110,7 +110,7 @@ else:
 
 if 'HS_' in plate_style:
     symmetry = "asymmetric"
-    plate_file = path.join(parts_path, r"hot_swap_plate")
+    plate_file = path.join(parts_path, r"diyk_hot_swap_plate")
     plate_offset = 0.0
 
 if (trackball_in_wall or ('TRACKBALL' in thumb_style)) and not ball_side == 'both':
@@ -221,6 +221,8 @@ def single_plate(cylinder_segments=100, side="right"):
                 keyswitch_height + 2 * clip_undercut,
                 mount_thickness
             )
+
+        if plate_style in ['NOTCH']:
             undercut = union([undercut,
                 box(
                     keyswitch_width + 2 * clip_undercut,
@@ -816,7 +818,7 @@ def thumb_connectors(side='right', style_override=None):
         return minidox_thumb_connectors()
     elif _thumb_style == "CARBONFET":
         return carbonfet_thumb_connectors()
-      
+
     elif "TRACKBALL" in _thumb_style:
         if (side == ball_side or ball_side == 'both'):
             if _thumb_style == "TRACKBALL_ORBYL":
@@ -825,7 +827,7 @@ def thumb_connectors(side='right', style_override=None):
                 return tbcj_thumb_connectors()
         else:
             return thumb_connectors(side, style_override=other_thumb)
-          
+
     else:
         return default_thumb_connectors()
 
@@ -2114,7 +2116,7 @@ def tbcj_thumb_layout(shape):
 
 #def oct_corner(i, radius, shape):
 #    i = (i+1)%8
-#    
+#
 #    points_x = [1, 2, 2, 1, -1, -2, -2, -1]
 #    points_y = [2, 1, -1, -2, -2, -1, 1, 2]
 #
@@ -2127,7 +2129,7 @@ def oct_corner(i, diameter, shape):
 
     r = radius
     m = radius * math.tan(math.pi / 8)
-    
+
     points_x = [m, r, r, m, -m, -r, -r, -m]
     points_y = [r, m, -m, -r, -r, -m, m, r]
 
@@ -2625,7 +2627,7 @@ def thumb_connection(side='right', style_override=None):
         return minidox_thumb_connection(side=side)
     elif _thumb_style == "CARBONFET":
         return carbonfet_thumb_connection(side=side)
-      
+
     elif "TRACKBALL" in _thumb_style:
         if (side == ball_side or ball_side == 'both'):
             if _thumb_style == "TRACKBALL_ORBYL":
@@ -4007,17 +4009,24 @@ def baseplate(wedge_angle=None, side='right'):
             hole_shapes=[]
             for hole in holes:
                 loc = hole.Center()
-                hole_shapes.append(
-                    translate(
-                        cylinder(screw_cbore_diameter/2.0, screw_cbore_depth),
-                        (loc.x, loc.y, 0)
-                        # (loc.x, loc.y, screw_cbore_depth/2)
+                if screw_cbore_style == "COUNTERBORE":
+                    hole_shapes.append(
+                        translate(
+                            cylinder(screw_cbore_diameter/2.0, screw_cbore_depth),
+                            (loc.x, loc.y, 0)
+                        )
                     )
-                )
+                else:
+                    hole_shapes.append(
+                        translate(
+                            cone(screw_cbore_diameter/2.0, screw_hole_diameter/2.0, screw_cbore_depth),
+                            (loc.x, loc.y, 0)
+                        )
+                    )
+
             shape = difference(shape, hole_shapes)
             shape = translate(shape, (0, 0, -base_rim_thickness))
             shape = union([shape, inner_shape])
-
 
         return shape
     else:
@@ -4036,47 +4045,55 @@ def baseplate(wedge_angle=None, side='right'):
 
         return sl.projection(cut=True)(shape)
 
+#Make L and R base objects
+base_r = baseplate(side='right')
+base_l = mirror(base_r, 'YZ')
+
+#Plate Logos
+logo_path = path.join(parts_path, logo_file)
+if logo_path is not None:
+    logo = import_file(logo_path)
+    logo = mirror(logo, 'YZ')
+
+    if logo_plates == "RIGHT" or "BOTH":
+        logo_r = translate(logo, (logo_xpos, logo_ypos, -base_rim_thickness-0.2))
+        base_r = difference(base_r, [logo_r])
+
+    if logo_plates == "LEFT" or "BOTH":
+        logo_l = translate(logo, (-logo_xpos, logo_ypos, -base_rim_thickness-0.2))
+        base_l = difference(base_l, [logo_l])
+
 def run():
 
     mod_r = model_side(side="right")
-    export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_right"))
+    export_file(shape=mod_r, fname=path.join(save_path, config_name + r"_Right"))
 
-    base = baseplate(side='right')
-    export_file(shape=base, fname=path.join(save_path, config_name + r"_right_plate"))
-    export_dxf(shape=base, fname=path.join(save_path, config_name + r"_right_plate"))
+    #base_r = baseplate(side='right')
+    export_file(shape=base_r, fname=path.join(save_path, config_name + r"_Right_Plate"))
+    export_file(shape=base_l, fname=path.join(save_path, config_name + r"_Left_Plate"))
 
     if symmetry == "asymmetric":
         mod_l = model_side(side="left")
-        export_file(shape=mod_l, fname=path.join(save_path, config_name + r"_left"))
-
-        base_l = mirror(baseplate(side='left'), 'YZ')
-        export_file(shape=base_l, fname=path.join(save_path, config_name + r"_left_plate"))
-        export_dxf(shape=base_l, fname=path.join(save_path, config_name + r"_left_plate"))
+        export_file(shape=mod_l, fname=path.join(save_path, config_name + r"_Left"))
 
     else:
-        export_file(shape=mirror(mod_r, 'YZ'), fname=path.join(save_path, config_name + r"_left"))
-
-        lbase = mirror(base, 'YZ')
-        export_file(shape=lbase, fname=path.join(save_path, config_name + r"_left_plate"))
-        export_dxf(shape=lbase, fname=path.join(save_path, config_name + r"_left_plate"))
+        export_file(shape=mirror(mod_r, 'YZ'), fname=path.join(save_path, config_name + r"_Left"))
 
 
-
-
-    if oled_mount_type == 'UNDERCUT':
-        export_file(shape=oled_undercut_mount_frame()[1], fname=path.join(save_path, config_name + r"_oled_undercut_test"))
-
-    if oled_mount_type == 'SLIDING':
-        export_file(shape=oled_sliding_mount_frame()[1], fname=path.join(save_path, config_name + r"_oled_sliding_test"))
-
-    if oled_mount_type == 'CLIP':
-        oled_mount_location_xyz = (0.0, 0.0, -oled_mount_depth / 2)
-        oled_mount_rotation_xyz = (0.0, 0.0, 0.0)
-        export_file(shape=oled_clip(), fname=path.join(save_path, config_name + r"_oled_clip"))
-        export_file(shape=oled_clip_mount_frame()[1],
-                            fname=path.join(save_path, config_name + r"_oled_clip_test"))
-        export_file(shape=union((oled_clip_mount_frame()[1], oled_clip())),
-                            fname=path.join(save_path, config_name + r"_oled_clip_assy_test"))
+    #if oled_mount_type == 'UNDERCUT':
+    #    export_file(shape=oled_undercut_mount_frame()[1], fname=path.join(save_path, config_name + r"_oled_undercut_test"))
+#
+    #if oled_mount_type == 'SLIDING':
+    #    export_file(shape=oled_sliding_mount_frame()[1], fname=path.join(save_path, config_name + r"_oled_sliding_test"))
+#
+    #if oled_mount_type == 'CLIP':
+    #    oled_mount_location_xyz = (0.0, 0.0, -oled_mount_depth / 2)
+    #    oled_mount_rotation_xyz = (0.0, 0.0, 0.0)
+    #    export_file(shape=oled_clip(), fname=path.join(save_path, config_name + r"_oled_clip"))
+    #    export_file(shape=oled_clip_mount_frame()[1],
+    #                        fname=path.join(save_path, config_name + r"_oled_clip_test"))
+    #    export_file(shape=union((oled_clip_mount_frame()[1], oled_clip())),
+    #                        fname=path.join(save_path, config_name + r"_oled_clip_assy_test"))
 
 # base = baseplate()
 # export_file(shape=base, fname=path.join(save_path, config_name + r"_plate"))

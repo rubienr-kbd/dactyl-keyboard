@@ -10,8 +10,8 @@ r2d = 180 / pi
 
 shape_config = {
 
-    'ENGINE': 'solid',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
-    # 'ENGINE': 'cadquery',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
+    # 'ENGINE': 'solid',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
+    'ENGINE': 'cadquery',  # 'solid' = solid python / OpenSCAD, 'cadquery' = cadquery / OpenCascade
 
 
     ######################
@@ -19,12 +19,12 @@ shape_config = {
     ######################
 
     'save_dir': '.',
-    'config_name':  "DM",
+    'config_name':  "DMF_4x6HS",
 
-    'show_caps': True,
+    'show_caps': False,
     'show_pcbs': False, #only runs if caps are shown, easist place to initially inject geometry
 
-    'nrows':  5, #5,  # key rows
+    'nrows':  4, #5,  # key rows
     'ncols':  6, #6,  # key columns
 
     'alpha':  pi / 12.0,  # curvature of the columns
@@ -48,17 +48,17 @@ shape_config = {
     # THUMB PARAMETERS
     ##############################
     # 'DEFAULT' 6-key, 'MINI' 5-key, 'CARBONFET' 6-key, 'MINIDOX' 3-key, 'TRACKBALL_ORBYL', 'TRACKBALL_CJ'
-    'thumb_style': 'TRACKBALL_ORBYL',
+    'thumb_style': 'DEFAULT',
     'default_1U_cluster': True, # only used with default, makes top right thumb cluster key 1U
     # Thumb key size.  May need slight oversizing, check w/ caps.  Additional spacing will be automatically added for larger keys.
     'minidox_Usize': 1.6,
     # Thumb plate rotations, anything other than 90 degree increments WILL NOT WORK.
-    'thumb_plate_tr_rotation': 0.0,  # Top right plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
-    'thumb_plate_tl_rotation': 0.0,  # Top left plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
-    'thumb_plate_mr_rotation': 0.0,  # Mid right plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
-    'thumb_plate_ml_rotation': 0.0,  # Mid left plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
-    'thumb_plate_br_rotation': 0.0,  # Bottom right plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
-    'thumb_plate_bl_rotation': 0.0,  # Bottom right plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
+    'thumb_plate_tr_rotation': 180.0,  # Top right plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
+    'thumb_plate_tl_rotation': 180.0,  # Top left plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
+    'thumb_plate_mr_rotation': 180.0,  # Mid right plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
+    'thumb_plate_ml_rotation': 180.0,  # Mid left plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
+    'thumb_plate_br_rotation': 180.0,  # Bottom right plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
+    'thumb_plate_bl_rotation': 180.0,  # Bottom right plate rotation tweaks as thumb cluster is crowded for hot swap, etc.
 
     ###################################
     ## Trackball in Wall             ##
@@ -138,7 +138,7 @@ shape_config = {
 
 
     'extra_width':  2.5,  # extra space between the base of keys# original= 2
-    'extra_height':  1.0,  # original= 0.5
+    'extra_height':  0.8,  # original= 0.5
 
     'wall_z_offset':  15,  # length of the first downward_sloping part of the wall
     'wall_x_offset':  5,  # offset in the x and/or y direction for the first downward_sloping part of the wall (negative)
@@ -183,8 +183,8 @@ shape_config = {
     'hole_keyswitch_height':  14.0,
     'hole_keyswitch_width':  14.0,
 
-    'nub_keyswitch_height':  14.4,
-    'nub_keyswitch_width':  14.4,
+    'nub_keyswitch_height':  14.0,
+    'nub_keyswitch_width':  14.0,
 
     'undercut_keyswitch_height':  14.0,
     'undercut_keyswitch_width':  14.0,
@@ -193,7 +193,7 @@ shape_config = {
     'sa_profile_key_height':  12.7,
     'sa_length': 18.5,
     'sa_double_length': 37.5,
-    'plate_thickness':  4+1.1,
+    'plate_thickness':  4,
 
     'plate_rim': 1.5 + 0.5,
     # Undercut style dimensions
@@ -300,9 +300,9 @@ shape_config = {
     'post_adj':  0,
     'screws_offset': 'INSIDE', #'OUTSIDE', 'INSIDE', 'ORIGINAL'
 
-    'screw_insert_height': 3.8,
-    'screw_insert_bottom_radius': 5.31 / 2,
-    'screw_insert_top_radius': 5.1 / 2,
+    'screw_insert_height': 5,
+    'screw_insert_bottom_radius': 4.8 / 2,
+    'screw_insert_top_radius': 4.6 / 2,
 
     # Does anyone even use these?  I think they just get in the way.
     'wire_post_height': 7,
@@ -335,13 +335,23 @@ shape_config = {
     ## Bottom Plate Dimensions
     ###################################
     # COMMON DIMENSION
-    'screw_hole_diameter': 2,
+    'screw_hole_diameter': 3,
     # USED FOR CADQUERY ONLY
-    'base_thickness': 3.0, # thickness in the middle of the plate
+    'base_thickness': 2.0, # thickness in the middle of the plate
     'base_offset': 3.0, # Both start flat/flush on the bottom.  This offsets the base up (if positive)
-    'base_rim_thickness': 5.0,  # thickness on the outer frame with screws
-    'screw_cbore_diameter': 4.0,
+    'base_rim_thickness': 3.0,  # thickness on the outer frame with screws
+    'screw_cbore_diameter': 5.8,
     'screw_cbore_depth': 2.0,
+    'screw_cbore_style':  'COUNTERSINK',# 'COUNTERSINK' (conical) or 'COUNTERBORE' (cylindrical)
+
+    ###################################
+    ## Bottom Plate Logo
+    ###################################
+    # COMMON DIMENSION
+    'logo_file':  'diyk_logo', #Logo STEP file name. Logo should be extruded 1mm high. Origin should be in center. Leave empty for none.
+    'logo_xpos':  -50,
+    'logo_ypos':  5,
+    'logo_plates':  'RIGHT', #LEFT, RIGHT, or BOTH
 
     # Offset is from the top inner corner of the top inner key.
 
