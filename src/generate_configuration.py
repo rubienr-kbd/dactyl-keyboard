@@ -178,7 +178,7 @@ shape_config = {
     # 'HS_UNDERCUT' = hot swap underside with undercut. Does not generate properly.  Hot swap step needs to be modified.
     # 'HS_NOTCH' = hot swap underside with notch.  Does not generate properly.  Hot swap step needs to be modified.
     # 'plate_style':  'NUB',
-    'plate_style': 'HS_NOTCH',
+    'plate_style': 'NOTCH',
 
     'hole_keyswitch_height':  14.0,
     'hole_keyswitch_width':  14.0,
@@ -350,7 +350,7 @@ shape_config = {
     # COMMON DIMENSION
     'logo_file':  'diyk_logo', #Logo STEP file name. Logo should be extruded 1mm high. Origin should be in center. Leave empty for none.
     'logo_xpos':  -50,
-    'logo_ypos':  0,
+    'logo_ypos':  5,
     'logo_plates':  'RIGHT', #LEFT, RIGHT, or BOTH
 
     # Offset is from the top inner corner of the top inner key.

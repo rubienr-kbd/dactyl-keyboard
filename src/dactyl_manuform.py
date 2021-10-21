@@ -4054,14 +4054,13 @@ logo_path = path.join(parts_path, logo_file)
 if logo_path is not None:
     logo = import_file(logo_path)
     logo = mirror(logo, 'YZ')
-    symmetry = "asymmetric_plate"
 
     if logo_plates == "RIGHT" or "BOTH":
         logo_r = translate(logo, (logo_xpos, logo_ypos, -base_rim_thickness-0.2))
         base_r = difference(base_r, [logo_r])
 
     if logo_plates == "LEFT" or "BOTH":
-        logo_l = translate(logo, (logo_xpos, logo_ypos, -base_rim_thickness-0.2))
+        logo_l = translate(logo, (-logo_xpos, logo_ypos, -base_rim_thickness-0.2))
         base_l = difference(base_l, [logo_l])
 
 def run():
@@ -4071,25 +4070,14 @@ def run():
 
     #base_r = baseplate(side='right')
     export_file(shape=base_r, fname=path.join(save_path, config_name + r"_Right_Plate"))
-    #export_dxf(shape=base, fname=path.join(save_path, config_name + r"_right_plate"))
+    export_file(shape=base_l, fname=path.join(save_path, config_name + r"_Left_Plate"))
 
     if symmetry == "asymmetric":
         mod_l = model_side(side="left")
         export_file(shape=mod_l, fname=path.join(save_path, config_name + r"_Left"))
 
-    if symmetry == "asymmetric_plate":
-        #base_l = mirror(baseplate(side='left'), 'YZ')
-        export_file(shape=base_l, fname=path.join(save_path, config_name + r"_Left_Plate"))
-        #export_dxf(shape=base_l, fname=path.join(save_path, config_name + r"_left_plate"))
-
     else:
         export_file(shape=mirror(mod_r, 'YZ'), fname=path.join(save_path, config_name + r"_Left"))
-
-        #lbase = mirror(base_r, 'YZ')
-        export_file(shape=base_l, fname=path.join(save_path, config_name + r"_Left_Plate"))
-        #export_dxf(shape=lbase, fname=path.join(save_path, config_name + r"_left_plate"))
-
-
 
 
     #if oled_mount_type == 'UNDERCUT':
