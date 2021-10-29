@@ -53,10 +53,12 @@ except Exception:
 if save_dir in ['', None, '.']:
     save_path = path.join(r"..", "things")
     parts_path = path.join(r"..", "src", "parts")
+
 else:
     save_path = path.join(r"..", "things", save_dir)
-    parts_path = path.join(r"..", r"..", "src", "parts")
+    parts_path = path.join(r"..", "src", "parts")
 
+print('Save Path: ' + save_path + '\n' + 'Parts Path: ' + parts_path ) 
 ###############################################
 # END EXTREMELY UGLY BOOTSTRAP
 ###############################################
