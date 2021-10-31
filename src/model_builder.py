@@ -24,8 +24,8 @@ config_options = [
     },
     {
         'name': '{}TMB', 'vars': ['thumb_style'],
-        'vals': ['DEFAULT', 'MINIDOX', 'MINI', 'CARBONFET'],
-        'val_names': ['DEF', 'MDOX', 'MINI', 'CF']
+        'vals': ['DEFAULT', 'MINI', 'CARBONFET'],
+        'val_names': ['DEF', 'MINI', 'CF']
         # 'vals': ['DEFAULT', 'MINI', 'CARBONFET', 'MINIDOX', 'TRACKBALL_ORBISSYL'],
         # 'val_names': ['DEF', 'MINI', 'CF', 'MDOX', 'ORBY']
     },
@@ -34,13 +34,13 @@ config_options = [
         'vals': ['CLIP', 'NONE'],
         'val_names': ['OLED', 'NOLED']
     },
-    {
-        'name': '{}CTRL', 'vars': ['controller_mount_type'],
-        'vals': ['EXTERNAL'],
-        'val_names': ['EXT'],
-        #'vals': ['EXTERNAL', 'RJ9_USB_WALL'],
-        #'val_names': ['EXT', 'DEF'],
-    },
+    #{
+    #    'name': '{}CTRL', 'vars': ['controller_mount_type'],
+    #    'vals': ['EXTERNAL'],
+    #    'val_names': ['EXT'],
+    #    #'vals': ['EXTERNAL', 'RJ9_USB_WALL'],
+    #    #'val_names': ['EXT', 'DEF'],
+    #},
 ]
 
 
