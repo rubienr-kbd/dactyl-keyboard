@@ -3783,8 +3783,8 @@ def screw_insert_all_shapes(bottom_radius, top_radius, height, offset=0, side='r
         translate(screw_insert(0, lastrow-1, bottom_radius, top_radius, height, side=side), (0, left_wall_lower_y_offset, offset)),
         translate(screw_insert(3, lastrow, bottom_radius, top_radius, height, side=side), (0, 0, offset)),
         translate(screw_insert(3, 0, bottom_radius, top_radius, height, side=side), (0,0, offset)),
-        translate(screw_insert(lastcol, 0, bottom_radius, top_radius, height, side=side), (0, 4.5, offset)), #Moved up to clear hotswap sockets
-        translate(screw_insert(lastcol, lastrow-1, bottom_radius, top_radius, height, side=side), (0, -4.5, offset)), #Moved down to clear hotswap sockets
+        translate(screw_insert(lastcol, 0, bottom_radius, top_radius, height, side=side), (0, 0, offset)), #Outside top
+        translate(screw_insert(lastcol, lastrow-1, bottom_radius, top_radius, height, side=side), (0, 5, offset)), #Outside bottom moved up to clear hotswap sockets
         translate(screw_insert_thumb(bottom_radius, top_radius, height), (0, 0, offset)),
     )
 
