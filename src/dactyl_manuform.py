@@ -25,7 +25,10 @@ for item in cfg.shape_config:
 
 ## LOAD RUN CONFIGURATION FILE AND WRITE TO ANY VARIABLES IN FILE.
 with open('run_config.json', mode='r') as fid:
-    data = json.load(fid)
+    config = list()
+    for line in fid:
+      config.append(line.split("//")[0])
+    data = json.loads(" ".join(config))
 for item in data:
     locals()[item] = data[item]
 
@@ -417,7 +420,7 @@ def key_holes(side="right"):
     holes = []
     for column in range(ncols):
         for row in range(nrows):
-            if (column in [2, 3]) or (not row == lastrow):
+            if (column in [2, 3, 4, 5]) or (not row == lastrow):
                 holes.append(key_place(single_plate(side=side), column, row))
 
     shape = union(holes)
@@ -429,7 +432,7 @@ def caps():
     caps = None
     for column in range(ncols):
         for row in range(nrows):
-            if (column in [2, 3]) or (not row == lastrow):
+            if (column in [2, 3, 4, 5]) or (not row == lastrow):
                 if caps is None:
                     caps = key_place(sa_cap(), column, row)
                 else:
@@ -488,18 +491,27 @@ def web_post_br(wide=False):
 def connectors():
     debugprint('connectors()')
     hulls = []
+    # inter-column connectors, except last row
     for column in range(ncols - 1):
-        for row in range(lastrow):  # need to consider last_row?
-            # for row in range(nrows):  # need to consider last_row?
+        for row in range(lastrow):
             places = []
             places.append(key_place(web_post_tl(), column + 1, row))
             places.append(key_place(web_post_tr(), column, row))
             places.append(key_place(web_post_bl(), column + 1, row))
             places.append(key_place(web_post_br(), column, row))
             hulls.append(triangle_hulls(places))
-
-    for column in range(ncols):
-        # for row in range(nrows-1):
+    
+    # inter-column connectors: last row
+    for column in range(2, ncols-1):
+            places = []
+            places.append(key_place(web_post_tl(), column + 1, nrows - 1))
+            places.append(key_place(web_post_tr(), column, nrows - 1))
+            places.append(key_place(web_post_bl(), column + 1, nrows - 1))
+            places.append(key_place(web_post_br(), column, nrows - 1))
+            hulls.append(triangle_hulls(places))
+            
+    # inter-row connectors, except last row
+    for column in range(ncols): 
         for row in range(cornerrow):
             places = []
             places.append(key_place(web_post_bl(), column, row))
@@ -508,6 +520,16 @@ def connectors():
             places.append(key_place(web_post_tr(), column, row + 1))
             hulls.append(triangle_hulls(places))
 
+    # inter-row connectors: last row
+    for column in range(2, ncols):
+          places = []
+          places.append(key_place(web_post_bl(), column, lastrow - 1))
+          places.append(key_place(web_post_br(), column, lastrow - 1))
+          places.append(key_place(web_post_tl(), column, lastrow))
+          places.append(key_place(web_post_tr(), column, lastrow))
+          hulls.append(triangle_hulls(places))
+
+    # intersections connectors, except last row
     for column in range(ncols - 1):
         # for row in range(nrows-1):  # need to consider last_row?
         for row in range(cornerrow):  # need to consider last_row?
@@ -516,6 +538,15 @@ def connectors():
             places.append(key_place(web_post_tr(), column, row + 1))
             places.append(key_place(web_post_bl(), column + 1, row))
             places.append(key_place(web_post_tl(), column + 1, row + 1))
+            hulls.append(triangle_hulls(places))
+
+    # intersections connectors: last row
+    for column in range(1, ncols-1):
+            places = []
+            places.append(key_place(web_post_br(), column, lastrow -1 ))
+            places.append(key_place(web_post_tr(), column, lastrow))
+            places.append(key_place(web_post_bl(), column + 1, lastrow -1))
+            places.append(key_place(web_post_tl(), column + 1, lastrow))
             hulls.append(triangle_hulls(places))
 
     return union(hulls)
@@ -815,39 +846,17 @@ def default_thumb_connectors():
                 thumb_tr_place(thumb_post_br()),
                 key_place(web_post_br(), 2, lastrow),
                 key_place(web_post_bl(), 3, lastrow),
-                key_place(web_post_tr(), 2, lastrow),
-                key_place(web_post_tl(), 3, lastrow),
-                key_place(web_post_bl(), 3, cornerrow),
-                key_place(web_post_tr(), 3, lastrow),
-                key_place(web_post_br(), 3, cornerrow),
-                key_place(web_post_bl(), 4, cornerrow),
+                #key_place(web_post_tr(), 2, lastrow),
+                #key_place(web_post_tl(), 3, lastrow),
+                #key_place(web_post_bl(), 3, cornerrow),
+                #key_place(web_post_tr(), 3, lastrow),
+                #key_place(web_post_br(), 3, cornerrow),
+                #key_place(web_post_bl(), 4, cornerrow),
             ]
         )
     )
 
-    hulls.append(
-        triangle_hulls(
-            [
-                key_place(web_post_br(), 1, cornerrow),
-                key_place(web_post_tl(), 2, lastrow),
-                key_place(web_post_bl(), 2, cornerrow),
-                key_place(web_post_tr(), 2, lastrow),
-                key_place(web_post_br(), 2, cornerrow),
-                key_place(web_post_bl(), 3, cornerrow),
-            ]
-        )
-    )
 
-    hulls.append(
-        triangle_hulls(
-            [
-                key_place(web_post_tr(), 3, lastrow),
-                key_place(web_post_br(), 3, lastrow),
-                key_place(web_post_tr(), 3, lastrow),
-                key_place(web_post_bl(), 4, cornerrow),
-            ]
-        )
-    )
 
     return union(hulls)
 
@@ -1512,7 +1521,7 @@ def right_wall():
         )
     ])
 
-    for i in range(lastrow - 1):
+    for i in range(lastrow):
         y = i + 1
         shape = union([shape,key_wall_brace(
             lastcol, y - 1, 1, 0, web_post_br(), lastcol, y, 1, 0, web_post_tr()
@@ -1523,18 +1532,22 @@ def right_wall():
         )])
         #STRANGE PARTIAL OFFSET
 
+    #shape = union([shape,key_wall_brace(
+    #    lastcol, lastrow - 1 , 1, 0, web_post_tr(), lastcol, lastrow, 1, 0.5, web_post_br()
+    #)])
+        
     shape = union([shape,key_wall_brace(
-        lastcol,
-        cornerrow,
-        0,
-        -1,
-        web_post_br(),
-        lastcol,
-        cornerrow,
-        1,
-        0,
-        web_post_br(),
-    )])
+         lastcol,
+         lastrow,
+         0,
+         -0.5,
+         web_post_br(),
+         lastcol,
+         lastrow,
+         1,
+         0,
+         web_post_br(),
+     )])
     return shape
 
 
@@ -1614,21 +1627,26 @@ def front_wall():
             lastcol, 0, 0, 1, web_post_tr(), lastcol, 0, 1, 0, web_post_tr()
         )
     ])
+    
     shape = union([shape,key_wall_brace(
-        3, lastrow, 0, -1, web_post_bl(), 3, lastrow, 0.5, -1, web_post_br()
+        3, lastrow, 0, -1, web_post_bl(), 3, lastrow, 0.0, -1.2, web_post_br()
     )])
+
     shape = union([shape,key_wall_brace(
-        3, lastrow, 0.5, -1, web_post_br(), 4, cornerrow, 1, -1, web_post_bl()
+        3, lastrow, 0.0, -1.2, web_post_br(), 4, lastrow, 0, -0.5, web_post_bl()
     )])
-    for i in range(ncols - 4):
-        x = i + 4
+    
+    if ncols >= 5:
         shape = union([shape,key_wall_brace(
-            x, cornerrow, 0, -1, web_post_bl(), x, cornerrow, 0, -1, web_post_br()
+            4, lastrow, 0, -0.5, web_post_br(), 4, lastrow, 0, -0.5, web_post_bl()
         )])
-    for i in range(ncols - 5):
-        x = i + 5
-        shape = union([shape, key_wall_brace(
-            x, cornerrow, 0, -1, web_post_bl(), x - 1, cornerrow, 0, -1, web_post_br()
+    
+    if ncols >= 6:
+        shape = union([shape,key_wall_brace(
+            5, lastrow, 0, -0.5, web_post_br(), 5, lastrow, 0, -0.5, web_post_bl()
+        )])
+        shape = union([shape,key_wall_brace(
+            5, lastrow, 0, -0.5, web_post_bl(), 4, lastrow, 0, -0.5, web_post_br()
         )])
 
     return shape
@@ -2405,13 +2423,20 @@ def screw_insert_thumb(bottom_radius, top_radius, height):
 def screw_insert_all_shapes(bottom_radius, top_radius, height, offset=0):
     print('screw_insert_all_shapes()')
     shape = (
-        translate(screw_insert(0, 0, bottom_radius, top_radius, height), (0, 0, offset)),
-        translate(screw_insert(0, lastrow-1, bottom_radius, top_radius, height), (0, 0, offset)),
-        translate(screw_insert(3, lastrow, bottom_radius, top_radius, height), (0, 0, offset)),
-        translate(screw_insert(3, 0, bottom_radius, top_radius, height), (0,0, offset)),
-        translate(screw_insert(lastcol, 0, bottom_radius, top_radius, height), (0, 0, offset)),
-        translate(screw_insert(lastcol, lastrow-1, bottom_radius, top_radius, height), (0, 0, offset)),
-        translate(screw_insert_thumb(bottom_radius, top_radius, height), (0, 0, offset)),
+        translate(screw_insert(0, 0, bottom_radius, top_radius, height),
+            (screws_offset_xy[0][0], screws_offset_xy[0][1], offset)), # inner-back/oled
+        translate(screw_insert(0, lastrow-1, bottom_radius, top_radius, height),
+            (screws_offset_xy[1][0], screws_offset_xy[1][1], offset)), # inner-front
+        translate(screw_insert(3, lastrow, bottom_radius, top_radius, height),
+            (screws_offset_xy[2][0], screws_offset_xy[2][1], offset)), # front
+        translate(screw_insert(3, 0, bottom_radius, top_radius, height),
+            (screws_offset_xy[3][0], screws_offset_xy[3][1], offset)), # back
+        translate(screw_insert(lastcol, 0, bottom_radius, top_radius, height),
+            (screws_offset_xy[4][0], screws_offset_xy[4][1], offset)), # outer-back
+        translate(screw_insert(lastcol, lastrow-1, bottom_radius, top_radius, height),
+            (screws_offset_xy[5][0], screws_offset_xy[5][1], offset)), # outer-front
+        translate(screw_insert_thumb(bottom_radius, top_radius, height),
+            (screws_offset_xy[6][0], screws_offset_xy[6][1], offset)), # front/thumb
     )
 
     return shape
@@ -2541,7 +2566,7 @@ def model_side(side="right"):
     shape = difference(shape, [block])
 
     if show_caps:
-        shape = add([shape, thumbcaps()])
+        #shape = add([shape, thumbcaps()])
         shape = add([shape, caps()])
 
     if side == "left":

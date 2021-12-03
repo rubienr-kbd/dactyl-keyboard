@@ -3,7 +3,7 @@
     "save_dir": ".",
     "config_name": "DM",
     "show_caps": false,
-    "nrows": 5,
+    "nrows": 6,
     "ncols": 6,
     "alpha": 0.26179916666666664,
     "beta": 0.08726638888888888,
@@ -18,22 +18,22 @@
         -3,
         7
     ],
-    "keyboard_z_offset": 13,
+    "keyboard_z_offset": 7,         // extra height of wall (except roundness)
     "thumb_style": "DEFAULT",
-    "thumb_plate_tr_rotation": 0.0,
-    "thumb_plate_tl_rotation": 0.0,
-    "thumb_plate_mr_rotation": 0.0,
-    "thumb_plate_ml_rotation": 0.0,
-    "thumb_plate_br_rotation": 0.0,
-    "thumb_plate_bl_rotation": 0.0,
+    "thumb_plate_tr_rotation": 0.0, // TODO: rotates base but does not close mesh
+    "thumb_plate_tl_rotation": 0.0, // TODO: rotates base but does not close mesh
+    "thumb_plate_mr_rotation": 0.0, // TODO: rotates base but does not close mesh
+    "thumb_plate_ml_rotation": 0.0, // TODO: rotates base but does not close mesh
+    "thumb_plate_br_rotation": 0.0, // TODO: rotates base but does not close mesh
+    "thumb_plate_bl_rotation": 0.0, // TODO: rotates base but does not close mesh
     "pinky_1_5U": false,
     "first_1_5U_row": 0,
     "last_1_5U_row": 5,
-    "extra_width": 2.5,
-    "extra_height": 1.0,
-    "wall_z_offset": 15,
+    "extra_width": 2.0,
+    "extra_height": 0.0,
+    "wall_z_offset": 5,
     "wall_x_offset": 5,
-    "wall_y_offset": 6,
+    "wall_y_offset": 5,
     "left_wall_x_offset": 12,
     "left_wall_z_offset": 3,
     "wall_thickness": 4.5,
@@ -68,7 +68,7 @@
         17.5
     ],
     "fixed_tenting": 0.0,
-    "plate_style": "HS_NOTCH",
+    "plate_style": "NOTCH",
     "hole_keyswitch_height": 14.0,
     "hole_keyswitch_width": 14.0,
     "nub_keyswitch_height": 14.4,
@@ -84,7 +84,7 @@
     "undercut_transition": 0.2,
     "plate_file": null,
     "plate_offset": 0.0,
-    "oled_mount_type": "CLIP",
+    "oled_mount_type": "SLIDING",
     "oled_center_row": 1.5,
     "oled_translation_offset": [
         0,
@@ -183,6 +183,36 @@
     "post_size": 0.1,
     "post_adj": 0,
     "screws_offset": "INSIDE",
+    "screws_offset_xy": [
+        [ // inner-back/oled
+            2,
+            0
+        ],
+        [ // inner front
+            2,
+            0
+        ],
+        [ // front
+            -15,
+            -2
+        ],
+        [ // back
+            -23,
+            -2
+        ],
+        [ // outer-back
+            -1,
+            3
+        ],
+        [ // outer-front
+            0,
+            -6
+        ],
+        [ // front/thumb
+            -2,
+            3
+        ]
+    ],
     "controller_mount_type": "EXTERNAL",
     "external_holder_height": 12.5,
     "external_holder_width": 28.75,
