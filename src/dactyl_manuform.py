@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 from numpy import pi
 import os.path as path
@@ -616,20 +618,19 @@ def thumb_bl_place(shape):
 def thumb_1x_layout(shape, cap=False):
     debugprint('thumb_1x_layout()')
     if cap:
-        shapes = thumb_mr_place(shape)
-        shapes = shapes.add(thumb_ml_place(rotate(shape, [0, 0, thumb_plate_ml_rotation])))
-        shapes = shapes.add(thumb_br_place(rotate(shape, [0, 0, thumb_plate_br_rotation])))
-        shapes = shapes.add(thumb_bl_place(rotate(shape, [0, 0, thumb_plate_bl_rotation])))
+        return add([
+            thumb_mr_place(rotate(shape, [0, 0, thumb_plate_mr_rotation])),
+            thumb_ml_place(rotate(shape, [0, 0, thumb_plate_ml_rotation])),
+            thumb_br_place(rotate(shape, [0, 0, thumb_plate_br_rotation])),
+            thumb_bl_place(rotate(shape, [0, 0, thumb_plate_bl_rotation])),
+        ])
     else:
-        shapes = union(
-            [
-                thumb_mr_place(rotate(shape, [0, 0, thumb_plate_mr_rotation])),
-                thumb_ml_place(rotate(shape, [0, 0, thumb_plate_ml_rotation])),
-                thumb_br_place(rotate(shape, [0, 0, thumb_plate_br_rotation])),
-                thumb_bl_place(rotate(shape, [0, 0, thumb_plate_bl_rotation])),
-            ]
-        )
-    return shapes
+        return union([
+            thumb_mr_place(rotate(shape, [0, 0, thumb_plate_mr_rotation])),
+            thumb_ml_place(rotate(shape, [0, 0, thumb_plate_ml_rotation])),
+            thumb_br_place(rotate(shape, [0, 0, thumb_plate_br_rotation])),
+            thumb_bl_place(rotate(shape, [0, 0, thumb_plate_bl_rotation])),
+        ])
 
 
 def thumb_15x_layout(shape, cap=False, plate=True):
@@ -639,7 +640,7 @@ def thumb_15x_layout(shape, cap=False, plate=True):
             shape = rotate(shape, (0, 0, 90))
             return add([
                 thumb_tr_place(rotate(shape, [0, 0, thumb_plate_tr_rotation])),
-                thumb_tl_place(rotate(shape, [0, 0, thumb_plate_tl_rotation])).solids().objects[0]
+                thumb_tl_place(rotate(shape, [0, 0, thumb_plate_tl_rotation]))
             ])
         else:
             return union([
@@ -651,7 +652,7 @@ def thumb_15x_layout(shape, cap=False, plate=True):
             shape = rotate(shape, (0, 0, 90))
             return add([
                 thumb_tr_place(shape),
-                thumb_tl_place(shape).solids().objects[0]
+                thumb_tl_place(shape)
             ])
         else:
             return union([
@@ -661,7 +662,7 @@ def thumb_15x_layout(shape, cap=False, plate=True):
 
 
 def double_plate_half():
-    debugprint('double_plate()')
+    debugprint('double_plate_half()')
     plate_height = (sa_double_length - mount_height) / 3
     top_plate = box(mount_width, plate_height, web_thickness)
     top_plate = translate(top_plate,
@@ -674,7 +675,20 @@ def double_plate():
     top_plate = double_plate_half()
     return union((top_plate, mirror(top_plate, 'XZ')))
 
+def two_third_plate_half():
+    debugprint('twothird_plate_half()')
+    plate_height = (sa_double_length - mount_height) / 3
+    top_plate = box(mount_width, mount_height * 1/4, web_thickness)
+    top_plate = translate(top_plate,
+                          [0, (mount_height * 1/4 + mount_height) / 2, plate_thickness - (web_thickness / 2)]
+                          )
+    return top_plate
 
+def twothird_plate():
+    debugprint('twothird_plate()')
+    top_plate = two_third_plate_half()
+    return union((top_plate, mirror(top_plate, 'XZ')))
+    
 def thumbcaps():
     if thumb_style == "MINI":
         return mini_thumbcaps()
@@ -712,35 +726,35 @@ def default_thumb(side="right"):
     print('thumb()')
     shape = thumb_1x_layout(rotate(single_plate(side=side), (0, 0, -90)))
     shape = union([shape, thumb_15x_layout(rotate(single_plate(side=side), (0, 0, -90)))])
-    shape = union([shape, thumb_15x_layout(double_plate(), plate=False)])
+    shape = union([shape, thumb_15x_layout(twothird_plate(), plate=False)])
     return shape
 
 
 def thumb_post_tr():
     debugprint('thumb_post_tr()')
     return translate(web_post(),
-                     [(mount_width / 2) - post_adj, (mount_height / 1.15) - post_adj, 0]
+                     [(mount_width / 2) - post_adj, (mount_height / (4/3)) - post_adj, 0]
                      )
 
 
 def thumb_post_tl():
     debugprint('thumb_post_tl()')
     return translate(web_post(),
-                     [-(mount_width / 2) + post_adj, (mount_height / 1.15) - post_adj, 0]
+                     [-(mount_width / 2) + post_adj, (mount_height / (4/3)) - post_adj, 0]
                      )
 
 
 def thumb_post_bl():
     debugprint('thumb_post_bl()')
     return translate(web_post(),
-                     [-(mount_width / 2) + post_adj, -(mount_height / 1.15) + post_adj, 0]
+                     [-(mount_width / 2) + post_adj, -(mount_height / (4/3)) + post_adj, 0]
                      )
 
 
 def thumb_post_br():
     debugprint('thumb_post_br()')
     return translate(web_post(),
-                     [(mount_width / 2) - post_adj, -(mount_height / 1.15) + post_adj, 0]
+                     [(mount_width / 2) - post_adj, -(mount_height / (4/3)) + post_adj, 0]
                      )
 
 
@@ -758,7 +772,7 @@ def default_thumb_connectors():
                 thumb_tr_place(thumb_post_bl()),
             ]
         )
-    )
+   )
 
     # bottom two on the right
     hulls.append(
@@ -855,9 +869,6 @@ def default_thumb_connectors():
             ]
         )
     )
-
-
-
     return union(hulls)
 
 ############################
@@ -1711,7 +1722,7 @@ def default_thumb_connection():
                 thumb_tl_place(thumb_post_tl()),
             ]
         )
-    ])  # )
+    ])
 
     shape = union([shape, hull_from_shapes(
         [
@@ -2566,7 +2577,7 @@ def model_side(side="right"):
     shape = difference(shape, [block])
 
     if show_caps:
-        #shape = add([shape, thumbcaps()])
+        shape = add([shape, thumbcaps()])
         shape = add([shape, caps()])
 
     if side == "left":
