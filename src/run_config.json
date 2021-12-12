@@ -1,10 +1,12 @@
 {
-    "ENGINE": "solid", // or cadquery: produces higher output quality especially for post processing with FreeCad
+    "ENGINE": "solid", // very fast computation, less quality (baseplate), allows "show_caps": true
+    //"ENGINE": "cadquery", // higher output quality (baseplate, for post processing with FreeCad), needs "show_caps": false
     "save_dir": ".",
     "config_name": "DM",
     "show_caps": false,
     "nrows": 6,
-    "ncols": 6,
+    //"ncols": 6, // normal models: left and right side
+    "ncols": 9, // right side of model with arrow keys + ins/del + home/end + page up/down
     "alpha": 0.26179916666666664,
     "beta": 0.08726638888888888,
     "centercol": 3,
@@ -264,9 +266,32 @@
             5
         ],
         [
-            0,
+            6,
+            -6,
+            5
+        ],
+        [
+            6,
+            -6,
+            5
+        ],
+        [
+            6,
+            -6,
+            5
+        ],
+        [
+            6,
             -6,
             5
         ]
+    ],
+    "skip_keys": [  // [col, row] of keys to not render holes/caps
+     //[0,6],[0,7],[0,8], // f-row
+     //[1,6],[1,7],[1,8], // ins/home/pg-up row
+     //[2,6],[2,7],[2,8], // del/end/pg-down row
+     [3,6],[3,7],[3,8], // empty row
+     [4,6],      [4,8], // arrow up row
+     //[6,6],[6,7],[&,8], // empty row
     ]
 }

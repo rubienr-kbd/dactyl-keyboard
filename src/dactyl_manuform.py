@@ -429,7 +429,7 @@ def key_holes(side="right"):
     holes = []
     for column in range(ncols):
         for row in range(nrows):
-            if (column in [2, 3, 4, 5]) or (not row == lastrow):
+            if ((column in range(2, ncols)) or (not row == lastrow)) and ([row, column] not in skip_keys):
                 holes.append(key_place(single_plate(side=side), column, row))
 
     shape = union(holes)
@@ -441,7 +441,7 @@ def caps():
     caps = None
     for column in range(ncols):
         for row in range(nrows):
-            if (column in [2, 3, 4, 5]) or (not row == lastrow):
+            if ((column in range(2, ncols)) or (not row == lastrow)) and ([row, column] not in skip_keys):
                 if caps is None:
                     caps = key_place(sa_cap(), column, row)
                 else:
@@ -512,12 +512,12 @@ def connectors():
     
     # inter-column connectors: last row
     for column in range(2, ncols-1):
-            places = []
-            places.append(key_place(web_post_tl(), column + 1, nrows - 1))
-            places.append(key_place(web_post_tr(), column, nrows - 1))
-            places.append(key_place(web_post_bl(), column + 1, nrows - 1))
-            places.append(key_place(web_post_br(), column, nrows - 1))
-            hulls.append(triangle_hulls(places))
+        places = []
+        places.append(key_place(web_post_tl(), column + 1, nrows - 1))
+        places.append(key_place(web_post_tr(), column, nrows - 1))
+        places.append(key_place(web_post_bl(), column + 1, nrows - 1))
+        places.append(key_place(web_post_br(), column, nrows - 1))
+        hulls.append(triangle_hulls(places))
             
     # inter-row connectors, except last row
     for column in range(ncols): 
@@ -531,12 +531,12 @@ def connectors():
 
     # inter-row connectors: last row
     for column in range(2, ncols):
-          places = []
-          places.append(key_place(web_post_bl(), column, lastrow - 1))
-          places.append(key_place(web_post_br(), column, lastrow - 1))
-          places.append(key_place(web_post_tl(), column, lastrow))
-          places.append(key_place(web_post_tr(), column, lastrow))
-          hulls.append(triangle_hulls(places))
+        places = []
+        places.append(key_place(web_post_bl(), column, lastrow - 1))
+        places.append(key_place(web_post_br(), column, lastrow - 1))
+        places.append(key_place(web_post_tl(), column, lastrow))
+        places.append(key_place(web_post_tr(), column, lastrow))
+        hulls.append(triangle_hulls(places))
 
     # intersections connectors, except last row
     for column in range(ncols - 1):
@@ -551,11 +551,21 @@ def connectors():
 
     # intersections connectors: last row
     for column in range(1, ncols-1):
+        places = []
+        places.append(key_place(web_post_br(), column, lastrow -1 ))
+        places.append(key_place(web_post_tr(), column, lastrow))
+        places.append(key_place(web_post_bl(), column + 1, lastrow -1))
+        places.append(key_place(web_post_tl(), column + 1, lastrow))
+        hulls.append(triangle_hulls(places))
+
+    # skipped keys connectors
+    for row, column in skip_keys:
+        if row < nrows and column < ncols:
             places = []
-            places.append(key_place(web_post_br(), column, lastrow -1 ))
-            places.append(key_place(web_post_tr(), column, lastrow))
-            places.append(key_place(web_post_bl(), column + 1, lastrow -1))
-            places.append(key_place(web_post_tl(), column + 1, lastrow))
+            places.append(key_place(web_post_tl(), column, row))
+            places.append(key_place(web_post_tr(), column, row))
+            places.append(key_place(web_post_bl(), column, row))
+            places.append(key_place(web_post_br(), column, row))
             hulls.append(triangle_hulls(places))
 
     return union(hulls)
@@ -1680,12 +1690,12 @@ def front_wall():
         )])
     
     if ncols >= 6:
-        shape = union([shape,key_wall_brace(
-            5, lastrow, 0, -0.5, web_post_br(), 5, lastrow, 0, -0.5, web_post_bl()
-        )])
-        shape = union([shape,key_wall_brace(
-            5, lastrow, 0, -0.5, web_post_bl(), 4, lastrow, 0, -0.5, web_post_br()
-        )])
+        for c in range (6, ncols + 1):
+            shape = union(
+                [shape, key_wall_brace(c-1, lastrow, 0, -0.5, web_post_br(), c-1, lastrow, 0, -0.5, web_post_bl())])
+            shape = union(
+                [shape, key_wall_brace(c-1, lastrow, 0, -0.5, web_post_bl(), c-2, lastrow, 0, -0.5, web_post_br())])
+
 
     return shape
 
@@ -2652,10 +2662,11 @@ def baseplate():
         debugprint(sizes)
         inner_wire = base_wires[inner_index]
 
-        # inner_plate = cq.Workplane('XY').add(cq.Face.makeFromWires(inner_wire))
+        #inner_plate = cq.Workplane('XY').add(cq.Face.makeFromWires(inner_wire))
 
-        inner_shape = cq.Workplane('XY').add(cq.Solid.extrudeLinear(outerWire=inner_wire, innerWires=[], vecNormal=cq.Vector(0, 0, base_thickness)))
-        inner_shape = translate(inner_shape, (0, 0, -base_rim_thickness))
+        # TODO: multimethod.DispatchError: ('extrudeLinear: 0 methods found', (<class 'type'>,), [])
+        #inner_shape = cq.Workplane('XY').add(cq.Solid.extrudeLinear(outerWire=inner_wire, innerWires=[], vecNormal=cq.Vector(0, 0, base_thickness)))
+        #inner_shape = translate(inner_shape, (0, 0, -base_rim_thickness))
 
         holes = []
         for i in range(len(base_wires)):
@@ -2676,7 +2687,7 @@ def baseplate():
             )
         shape = difference(shape, hole_shapes)
         shape = translate(shape, (0, 0, -base_rim_thickness))
-        shape = union([shape, inner_shape])
+        #shape = union([shape, inner_shape])
 
 
         return shape

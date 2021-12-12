@@ -268,7 +268,10 @@ shape_config = {
         [0, 0, 0],
         [0, -6, 5],# REDUCED STAGGER
         [0, -6, 5],# REDUCED STAGGER
-        [0, -6, 5],# NOT USED IN MOST FORMATS (7th column)
+        [6, -6, 5],# NOT USED IN MOST FORMATS (7th column)
+        [6, -6, 5],# NOT USED IN MOST FORMATS (8th column)
+        [6, -6, 5],# NOT USED IN MOST FORMATS (9th column)
+        [6, -6, 5],# NOT USED IN MOST FORMATS (10th column)
     ],
 
 }
