@@ -1,5 +1,5 @@
 {
-    "ENGINE": "solid",
+    "ENGINE": "solid", // or cadquery: produces higher output quality especially for post processing with FreeCad
     "save_dir": ".",
     "config_name": "DM",
     "show_caps": false,

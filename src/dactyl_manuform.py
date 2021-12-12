@@ -261,7 +261,7 @@ sa_double_length = 37.5
 
 
 def sa_cap(Usize=1):
-    # MODIFIED TO NOT HAVE THE ROTATION.  NEEDS ROTATION DURING ASSEMBLY
+    # MODIFIED TO NOT HAVE THE ROTATION. NEEDS ROTATION DURING ASSEMBLY
     sa_length = 18.25
 
     if Usize == 1:
@@ -271,19 +271,26 @@ def sa_cap(Usize=1):
         pl2 = 6
         pw2 = 6
 
-    elif Usize == 2:
-        bl2 = sa_length
-        bw2 = sa_length / 2
-        m = 0
-        pl2 = 16
-        pw2 = 6
-
     elif Usize == 1.5:
         bl2 = sa_length / 2
         bw2 = 27.94 / 2
         m = 0
         pl2 = 6
         pw2 = 11
+
+    elif Usize == 1.25:
+        bl2 = sa_length / 2
+        bw2 = sa_length * 1.25 / 2
+        m = 0
+        pl2 = 6
+        pw2 = 11
+
+    elif Usize == 2:
+        bl2 = sa_length
+        bw2 = sa_length / 2
+        m = 0
+        pl2 = 16
+        pw2 = 6
 
     k1 = polyline([(bw2, bl2), (bw2, -bl2), (-bw2, -bl2), (-bw2, bl2), (bw2, bl2)])
     k1 = extrude_poly(outer_poly=k1, height=0.1)
@@ -579,7 +586,8 @@ def thumb_tl_place(shape):
     debugprint('thumb_tl_place()')
     shape = rotate(shape, [10, -23, 10])
     shape = translate(shape, thumborigin())
-    shape = translate(shape, [-32, -15, -2])
+    #shape = translate(shape, [-32, -15, -2])
+    shape = translate(shape, [-32, -17, -2])
     return shape
 
 
@@ -632,6 +640,28 @@ def thumb_1x_layout(shape, cap=False):
             thumb_bl_place(rotate(shape, [0, 0, thumb_plate_bl_rotation])),
         ])
 
+def thumb_125x_layout(shape, cap=False, plate=True):
+    debugprint('thumb_125x_layout()')
+    if plate:
+        if cap:
+            shape = rotate(shape, (0, 0, 90))
+            return add([
+                thumb_tl_place(rotate(shape, [0, 0, thumb_plate_tl_rotation]))
+            ])
+        else:
+            return union([
+                thumb_tl_place(rotate(shape, [0, 0, thumb_plate_tl_rotation])),
+            ])
+    else:
+        if cap:
+            shape = rotate(shape, (0, 0, 90))
+            return add([
+                thumb_tl_place(shape)
+            ])
+        else:
+            return union([
+                thumb_tl_place(shape),
+            ])
 
 def thumb_15x_layout(shape, cap=False, plate=True):
     debugprint('thumb_15x_layout()')
@@ -640,24 +670,20 @@ def thumb_15x_layout(shape, cap=False, plate=True):
             shape = rotate(shape, (0, 0, 90))
             return add([
                 thumb_tr_place(rotate(shape, [0, 0, thumb_plate_tr_rotation])),
-                thumb_tl_place(rotate(shape, [0, 0, thumb_plate_tl_rotation]))
             ])
         else:
             return union([
                 thumb_tr_place(rotate(shape, [0, 0, thumb_plate_tr_rotation])),
-                thumb_tl_place(rotate(shape, [0, 0, thumb_plate_tl_rotation])),
             ])
     else:
         if cap:
             shape = rotate(shape, (0, 0, 90))
             return add([
                 thumb_tr_place(shape),
-                thumb_tl_place(shape)
             ])
         else:
             return union([
                 thumb_tr_place(shape),
-                thumb_tl_place(shape),
             ])
 
 
@@ -676,11 +702,11 @@ def double_plate():
     return union((top_plate, mirror(top_plate, 'XZ')))
 
 def two_third_plate_half():
-    debugprint('twothird_plate_half()')
+    debugprint('two_third_plate_half()')
     plate_height = (sa_double_length - mount_height) / 3
     top_plate = box(mount_width, mount_height * 1/4, web_thickness)
     top_plate = translate(top_plate,
-                          [0, (mount_height * 1/4 + mount_height) / 2, plate_thickness - (web_thickness / 2)]
+                          [0, (mount_height * 1/8 + mount_height) / 2, plate_thickness - (web_thickness / 2)]
                           )
     return top_plate
 
@@ -718,43 +744,50 @@ def thumb_connectors():
 
 def default_thumbcaps():
     t1 = thumb_1x_layout(sa_cap(1), cap=True)
+    t125 = thumb_125x_layout(sa_cap(1.25), cap=True)
     t15 = thumb_15x_layout(sa_cap(1.5), cap=True)
-    return t1.add(t15)
+    return t1.add(t125).add(t15)
 
 
 def default_thumb(side="right"):
     print('thumb()')
     shape = thumb_1x_layout(rotate(single_plate(side=side), (0, 0, -90)))
+
+    shape = union([shape, thumb_125x_layout(rotate(single_plate(side=side), (0, 0, -90)))])
+    shape = union([shape, thumb_125x_layout(twothird_plate(), plate=False)])
+
     shape = union([shape, thumb_15x_layout(rotate(single_plate(side=side), (0, 0, -90)))])
     shape = union([shape, thumb_15x_layout(twothird_plate(), plate=False)])
     return shape
 
 
+FOO = (mount_height * 3 / 8 + mount_height) / 2
 def thumb_post_tr():
+
     debugprint('thumb_post_tr()')
     return translate(web_post(),
-                     [(mount_width / 2) - post_adj, (mount_height / (4/3)) - post_adj, 0]
+                     [(mount_width / 2) - post_adj, FOO - post_adj, 0]
                      )
 
 
 def thumb_post_tl():
     debugprint('thumb_post_tl()')
     return translate(web_post(),
-                     [-(mount_width / 2) + post_adj, (mount_height / (4/3)) - post_adj, 0]
+                     [-(mount_width / 2) + post_adj, FOO - post_adj, 0]
                      )
 
 
 def thumb_post_bl():
     debugprint('thumb_post_bl()')
     return translate(web_post(),
-                     [-(mount_width / 2) + post_adj, -(mount_height / (4/3)) + post_adj, 0]
+                     [-(mount_width / 2) + post_adj, -FOO + post_adj, 0]
                      )
 
 
 def thumb_post_br():
     debugprint('thumb_post_br()')
     return translate(web_post(),
-                     [(mount_width / 2) - post_adj, -(mount_height / (4/3)) + post_adj, 0]
+                     [(mount_width / 2) - post_adj, -FOO + post_adj, 0]
                      )
 
 
@@ -860,12 +893,6 @@ def default_thumb_connectors():
                 thumb_tr_place(thumb_post_br()),
                 key_place(web_post_br(), 2, lastrow),
                 key_place(web_post_bl(), 3, lastrow),
-                #key_place(web_post_tr(), 2, lastrow),
-                #key_place(web_post_tl(), 3, lastrow),
-                #key_place(web_post_bl(), 3, cornerrow),
-                #key_place(web_post_tr(), 3, lastrow),
-                #key_place(web_post_br(), 3, cornerrow),
-                #key_place(web_post_bl(), 4, cornerrow),
             ]
         )
     )
